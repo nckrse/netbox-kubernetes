@@ -13,10 +13,25 @@ spec:
     spec:
       containers:
       - name: netbox
-        image: ninech/netbox:v2.2.6
+        image: ninech/netbox:latest
         ports:
         - containerPort: 8001
         env:
+        - name: REDIS_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: REDIS_HOST
+              name: netbox-netbox-env
+        - name: REDIS_PORT
+          valueFrom:
+            configMapKeyRef:
+              key: REDIS_PORT
+              name: netbox-netbox-env
+        - name: REDIS_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: REDIS_PASSWORD
+              name: netbox-netbox-env
         - name: ALLOWED_HOSTS
           valueFrom:
             configMapKeyRef:
@@ -107,13 +122,28 @@ spec:
             configMapKeyRef:
               key: SUPERUSER_PASSWORD
               name: netbox-netbox-env
+        - name: MEDIA_ROOT
+          valueFrom:
+            configMapKeyRef:
+              key: MEDIA_ROOT
+              name: netbox-netbox-env
+        - name: WEBHOOKS_ENABLED
+          valueFrom:
+            configMapKeyRef:
+              key: WEBHOOKS_ENABLED
+              name: netbox-netbox-env
         volumeMounts:
+        - name: netbox-media-files
+          mountPath: /opt/netbox/netbox/media
         - name: netbox-nginx-config
           mountPath: /etc/netbox-nginx/ 
         - name: netbox-static-files
           mountPath: /opt/netbox/netbox/static  
       restartPolicy: Always
       volumes:
+      - name: netbox-media-files
+        persistentVolumeClaim:
+          claimName: netbox-media-files
       - name: netbox-nginx-config
         configMap:
           name: nginx-conf
@@ -149,7 +179,21 @@ spec:
   - ReadWriteMany
   resources:
     requests:
-      storage: 100Mi
+      storage: 10Gi
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: netbox-media-files
+  labels:
+    pvcname: netbox-media-files
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 4Gi
 
 ---
 apiVersion: v1
@@ -170,11 +214,16 @@ data:
   EMAIL_USERNAME: foo
   NETBOX_PASSWORD: guest
   NETBOX_USERNAME: guest
-  SECRET_KEY: r8OwDznj!!dci
+  SECRET_KEY: r8OwDznj!!dci#P9ghmRfdu1Ysxm0AiPeDCQhKE+N_rClfWNj
   SUPERUSER_API_TOKEN: 0123456789abcdef0123456789abcdef01234567
   SUPERUSER_EMAIL: admin@example.com
   SUPERUSER_NAME: admin
   SUPERUSER_PASSWORD: admin
+  REDIS_HOST: redis
+  REDIS_PORT: "6379"
+  REDIS_PASSWORD: H733Kdjndks81
+  WEBHOOKS_ENABLED: "true"
+  MEDIA_ROOT: "/opt/netbox/netbox/media"
 ---
 apiVersion: v1
 kind: ConfigMap

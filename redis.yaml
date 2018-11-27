@@ -1,0 +1,66 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: redis
+  labels:
+    backend: redis
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        backend: redis
+    spec:
+      containers:  
+      - image: redis:latest
+        name: redis
+        command:
+        - sh
+        - -c # this is to evaluate the $REDIS_PASSWORD from the env
+        - redis-server --appendonly yes --requirepass $REDIS_PASSWORD ## $$ because of docker-compose
+        ports:
+        - containerPort: 6379
+        env:
+        - name: REDIS_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: REDIS_PASSWORD
+              name: netbox-netbox-env
+        volumeMounts:
+        - name: netbox-redis-data
+          mountPath: /data
+      restartPolicy: Always
+      volumes:
+      - name: netbox-redis-data
+        persistentVolumeClaim:
+          claimName: netbox-redis-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: netbox-redis-data
+  labels:
+    pvcname: netbox-redis-data
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 4Gi         
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  labels:
+    backend: redis
+spec:
+  clusterIP: None
+  ports:
+  - name: redis
+    targetPort: 6379
+    port: 6379
+  selector:
+    backend: redis
+
