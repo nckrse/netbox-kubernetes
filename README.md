@@ -1,5 +1,8 @@
 # netbox-kubernetes
-Kubernetes manifest resources for Netbox.  all images are pulled from docker hub. Netbox images pulled from https://hub.docker.com/r/ninech/netbox/
+
+Kubernetes manifest resources for Netbox.  
+All images are pulled from docker hub.  
+Netbox images pulled from the [community-maintained Docker Hub](https://hub.docker.com/r/netboxcommunity/netbox/).
 
 
 ## Quickstart on Minikube
@@ -40,7 +43,8 @@ Default credentials:
 
 
 ## Dependencies
-https://hub.docker.com/r/ninech/netbox/
+
+https://hub.docker.com/r/netboxcommunity/netbox/
 
 ## Configuration
 

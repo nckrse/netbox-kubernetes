@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: netbox
-        image: ninech/netbox:latest
+        image: netboxcommunity/netbox:latest
         ports:
         - containerPort: 8001
         env:
