@@ -189,7 +189,9 @@ metadata:
   name: netbox-static-files
   namespace: netbox
   labels:
-    pvcname: netbox-static-files
+    name: netbox
+    component: backend
+    part-of: netbox
 spec:
   accessModes:
     - ReadWriteMany
@@ -204,7 +206,9 @@ metadata:
   name: netbox-media-files
   namespace: netbox
   labels:
-    pvcname: netbox-media-files
+    name: netbox
+    component: backend
+    part-of: netbox
 spec:
   accessModes:
     - ReadWriteMany
