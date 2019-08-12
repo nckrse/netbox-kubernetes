@@ -140,9 +140,9 @@ spec:
         - name: netbox-media-files
           mountPath: /opt/netbox/netbox/media
         - name: netbox-nginx-config
-          mountPath: /etc/netbox-nginx/ 
+          mountPath: /etc/netbox-nginx/
         - name: netbox-static-files
-          mountPath: /opt/netbox/netbox/static  
+          mountPath: /opt/netbox/netbox/static
       restartPolicy: Always
       volumes:
       - name: netbox-media-files
