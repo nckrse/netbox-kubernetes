@@ -41,7 +41,7 @@ spec:
             claimName: netbox-static-files
         - name: netbox-nginx-config
           configMap:
-            name: nginx-conf
+            name: shared-nginx-config
 
 ---
 apiVersion: v1

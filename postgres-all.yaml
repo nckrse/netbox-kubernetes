@@ -31,18 +31,18 @@ spec:
             - name: POSTGRES_DB
               valueFrom:
                 configMapKeyRef:
-                  key: POSTGRES_DB
-                  name: postgres-env
+                  name: shared-database-variables
+                  key: DB_NAME
             - name: POSTGRES_USER
               valueFrom:
                 configMapKeyRef:
-                  key: POSTGRES_USER
-                  name: postgres-env
+                  name: shared-database-variables
+                  key: DB_USER
             - name: POSTGRES_PASSWORD
               valueFrom:
-                configMapKeyRef:
-                  key: POSTGRES_PASSWORD
-                  name: postgres-env
+                secretKeyRef:
+                  name: shared-database-secrets
+                  key: DB_PASSWORD
           volumeMounts:
             - name: netbox-pg-backups
               mountPath: /var/lib/backups
@@ -72,18 +72,6 @@ spec:
     name: postgres
     component: database
     part-of: netbox
-
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: postgres-env
-  namespace: netbox
-data:
-  POSTGRES_DB: netbox
-  POSTGRES_USER: netbox
-  POSTGRES_PASSWORD: J5brHrAXFLQSif0K
-
 
 ---
 apiVersion: v1

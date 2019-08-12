@@ -1,0 +1,88 @@
+---
+# Shared PostgreSQL/Netbox variables
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: shared-database-variables
+  namespace: netbox
+data:
+  DB_NAME: netbox
+  DB_USER: netbox
+
+---
+# Shared PostgreSQL/Netbox secrets
+apiVersion: v1
+kind: Secret
+metadata:
+  name: shared-database-secrets
+  namespace: netbox
+type: Opaque
+data:
+  DB_PASSWORD: SjVickhyQVhGTFFTaWYwSwo=
+
+---
+# Shared Nginx configuration - Mapped to a Volume in Netbox and Nginx containers
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: shared-nginx-config
+  namespace: netbox
+data:
+  nginx.conf: |
+    worker_processes 1;
+    events {
+      worker_connections  1024;
+    }
+    http {
+      include       /etc/nginx/mime.types;
+      default_type  application/octet-stream;
+      sendfile        on;
+      tcp_nopush     on;
+      keepalive_timeout  65;
+      gzip  on;
+      server_tokens off;
+      server {
+          listen 80;
+          server_name localhost;
+          access_log off;
+          location /static/ {
+            alias /opt/netbox/netbox/static/;
+          }
+          location / {
+            proxy_pass http://netbox:8001;
+            proxy_set_header X-Forwarded-Host $http_host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            add_header P3P 'CP="ALL DSP COR PSAa PSDa OUR NOR ONL UNI COM NAV"';
+          }
+      }
+    }
+
+---
+# Netbox only variables
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: netbox-variables
+  namespace: netbox
+data:
+  ALLOWED_HOSTS: '*'
+  DB_HOST: postgres
+  EMAIL_FROM: netbox@bar.com
+  EMAIL_PASSWORD: bar
+  EMAIL_PORT: "25"
+  EMAIL_SERVER: localhost
+  EMAIL_TIMEOUT: "10"
+  EMAIL_USERNAME: foo
+  NETBOX_PASSWORD: guest
+  NETBOX_USERNAME: guest
+  SECRET_KEY: r8OwDznj!!dci#P9ghmRfdu1Ysxm0AiPeDCQhKE+N_rClfWNj
+  SUPERUSER_API_TOKEN: 0123456789abcdef0123456789abcdef01234567
+  SUPERUSER_EMAIL: admin@example.com
+  SUPERUSER_NAME: admin
+  SUPERUSER_PASSWORD: admin
+  REDIS_HOST: redis
+  REDIS_PORT: "6379"
+  REDIS_PASSWORD: H733Kdjndks81
+  WEBHOOKS_ENABLED: "true"
+  MEDIA_ROOT: "/opt/netbox/netbox/media"
