@@ -7,6 +7,7 @@ metadata:
   labels:
     name: netbox
     component: backend
+    part-of: netbox
 spec:
   replicas: 1
   template:
@@ -14,6 +15,7 @@ spec:
       labels:
         name: netbox
         component: backend
+        part-of: netbox
     spec:
       containers:
       - name: netbox
@@ -164,6 +166,7 @@ metadata:
   labels:
     name: netbox
     component: backend
+    part-of: netbox
 spec:
   ports:
   - name: nbox
@@ -172,6 +175,7 @@ spec:
   selector:
     name: netbox
     component: backend
+    part-of: netbox
 
 ---
 apiVersion: v1
