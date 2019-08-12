@@ -11,26 +11,26 @@ spec:
       template:
         spec:
           containers:
-          - name: postgres-dumper
-            image: dustnic82/postgresclient-scp:latest
-            imagePullPolicy: Always
-            args:
-              - /bin/sh
-              - -c
-              - |
-                pg_dump -U netbox -h postgres netbox > /var/lib/backups/$(date '+%Y-%m-%d-%H-%M').sql
-                if [ $? -ne 0 ]
-                then
-                    echo "pg_dump failed"
-                else
-                    echo "pg_dump succesful: /var/lib/backups/$(date '+%Y-%m-%d-%H-%M').sql"
-                fi
-            env:
-              - name: PGPASSWORD
-                valueFrom:
-                  configMapKeyRef:
-                    name: postgres-env
-                    key: POSTGRES_PASSWORD
+            - name: postgres-dumper
+              image: dustnic82/postgresclient-scp:latest
+              imagePullPolicy: Always
+              args:
+                - /bin/sh
+                - -c
+                - |
+                  pg_dump -U netbox -h postgres netbox > /var/lib/backups/$(date '+%Y-%m-%d-%H-%M').sql
+                  if [ $? -ne 0 ]
+                  then
+                      echo "pg_dump failed"
+                  else
+                      echo "pg_dump succesful: /var/lib/backups/$(date '+%Y-%m-%d-%H-%M').sql"
+                  fi
+              env:
+                - name: PGPASSWORD
+                  valueFrom:
+                    configMapKeyRef:
+                      name: postgres-env
+                      key: POSTGRES_PASSWORD
             volumeMounts:
               - name: netbox-pg-backups
                 mountPath: /var/lib/backups

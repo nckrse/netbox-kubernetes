@@ -23,33 +23,33 @@ spec:
         part-of: netbox
     spec:
       containers:
-      - image: postgres:10-alpine
-        name: postgres
-        ports:
-        - containerPort: 5432
-        env:
-        - name: POSTGRES_DB
-          valueFrom:
-            configMapKeyRef:
-              key: POSTGRES_DB
-              name: postgres-env
-        - name: POSTGRES_USER
-          valueFrom:
-            configMapKeyRef:
-              key: POSTGRES_USER
-              name: postgres-env
-        - name: POSTGRES_PASSWORD
-          valueFrom:
-            configMapKeyRef:
-              key: POSTGRES_PASSWORD
-              name: postgres-env
-        volumeMounts:
-        - name: netbox-pg-backups
-          mountPath: /var/lib/backups
+        - image: postgres:10-alpine
+          name: postgres
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  key: POSTGRES_DB
+                  name: postgres-env
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  key: POSTGRES_USER
+                  name: postgres-env
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  key: POSTGRES_PASSWORD
+                  name: postgres-env
+          volumeMounts:
+            - name: netbox-pg-backups
+              mountPath: /var/lib/backups
       volumes:
-      - name: netbox-pg-backups
-        persistentVolumeClaim:
-         claimName: netbox-pg-backups
+        - name: netbox-pg-backups
+          persistentVolumeClaim:
+           claimName: netbox-pg-backups
       restartPolicy: Always
 
 ---
@@ -65,9 +65,9 @@ metadata:
 spec:
   clusterIP: None
   ports:
-  - name: headless
-    port: 5432
-    targetPort: 5432
+    - name: headless
+      port: 5432
+      targetPort: 5432
   selector:
     name: postgres
     component: database
@@ -95,7 +95,7 @@ metadata:
     pvcname: netbox-pg-backups
 spec:
   accessModes:
-  - ReadWriteMany
+    - ReadWriteMany
   resources:
     requests:
       storage: 40Gi

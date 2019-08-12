@@ -23,144 +23,144 @@ spec:
         part-of: netbox
     spec:
       containers:
-      - name: netbox
-        image: netboxcommunity/netbox:latest
-        ports:
-        - containerPort: 8001
-        env:
-        - name: REDIS_HOST
-          valueFrom:
-            configMapKeyRef:
-              key: REDIS_HOST
-              name: netbox-netbox-env
-        - name: REDIS_PORT
-          valueFrom:
-            configMapKeyRef:
-              key: REDIS_PORT
-              name: netbox-netbox-env
-        - name: REDIS_PASSWORD
-          valueFrom:
-            configMapKeyRef:
-              key: REDIS_PASSWORD
-              name: netbox-netbox-env
-        - name: ALLOWED_HOSTS
-          valueFrom:
-            configMapKeyRef:
-              key: ALLOWED_HOSTS
-              name: netbox-netbox-env
-        - name: DB_HOST
-          valueFrom:
-            configMapKeyRef:
-              key: DB_HOST
-              name: netbox-netbox-env
-        - name: DB_NAME
-          valueFrom:
-            configMapKeyRef:
-              key: DB_NAME
-              name: netbox-netbox-env
-        - name: DB_PASSWORD
-          valueFrom:
-            configMapKeyRef:
-              key: DB_PASSWORD
-              name: netbox-netbox-env
-        - name: DB_USER
-          valueFrom:
-            configMapKeyRef:
-              key: DB_USER
-              name: netbox-netbox-env
-        - name: EMAIL_FROM
-          valueFrom:
-            configMapKeyRef:
-              key: EMAIL_FROM
-              name: netbox-netbox-env
-        - name: EMAIL_PASSWORD
-          valueFrom:
-            configMapKeyRef:
-              key: EMAIL_PASSWORD
-              name: netbox-netbox-env
-        - name: EMAIL_PORT
-          valueFrom:
-            configMapKeyRef:
-              key: EMAIL_PORT
-              name: netbox-netbox-env
-        - name: EMAIL_SERVER
-          valueFrom:
-            configMapKeyRef:
-              key: EMAIL_SERVER
-              name: netbox-netbox-env
-        - name: EMAIL_TIMEOUT
-          valueFrom:
-            configMapKeyRef:
-              key: EMAIL_TIMEOUT
-              name: netbox-netbox-env
-        - name: EMAIL_USERNAME
-          valueFrom:
-            configMapKeyRef:
-              key: EMAIL_USERNAME
-              name: netbox-netbox-env
-        - name: NETBOX_PASSWORD
-          valueFrom:
-            configMapKeyRef:
-              key: NETBOX_PASSWORD
-              name: netbox-netbox-env
-        - name: NETBOX_USERNAME
-          valueFrom:
-            configMapKeyRef:
-              key: NETBOX_USERNAME
-              name: netbox-netbox-env
-        - name: SECRET_KEY
-          valueFrom:
-            configMapKeyRef:
-              key: SECRET_KEY
-              name: netbox-netbox-env
-        - name: SUPERUSER_API_TOKEN
-          valueFrom:
-            configMapKeyRef:
-              key: SUPERUSER_API_TOKEN
-              name: netbox-netbox-env
-        - name: SUPERUSER_EMAIL
-          valueFrom:
-            configMapKeyRef:
-              key: SUPERUSER_EMAIL
-              name: netbox-netbox-env
-        - name: SUPERUSER_NAME
-          valueFrom:
-            configMapKeyRef:
-              key: SUPERUSER_NAME
-              name: netbox-netbox-env
-        - name: SUPERUSER_PASSWORD
-          valueFrom:
-            configMapKeyRef:
-              key: SUPERUSER_PASSWORD
-              name: netbox-netbox-env
-        - name: MEDIA_ROOT
-          valueFrom:
-            configMapKeyRef:
-              key: MEDIA_ROOT
-              name: netbox-netbox-env
-        - name: WEBHOOKS_ENABLED
-          valueFrom:
-            configMapKeyRef:
-              key: WEBHOOKS_ENABLED
-              name: netbox-netbox-env
-        volumeMounts:
-        - name: netbox-media-files
-          mountPath: /opt/netbox/netbox/media
-        - name: netbox-nginx-config
-          mountPath: /etc/netbox-nginx/
-        - name: netbox-static-files
-          mountPath: /opt/netbox/netbox/static
+        - name: netbox
+          image: netboxcommunity/netbox:latest
+          ports:
+            - containerPort: 8001
+          env:
+            - name: REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: REDIS_HOST
+                  name: netbox-netbox-env
+            - name: REDIS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: REDIS_PORT
+                  name: netbox-netbox-env
+            - name: REDIS_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  key: REDIS_PASSWORD
+                  name: netbox-netbox-env
+            - name: ALLOWED_HOSTS
+              valueFrom:
+                configMapKeyRef:
+                  key: ALLOWED_HOSTS
+                  name: netbox-netbox-env
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: DB_HOST
+                  name: netbox-netbox-env
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  key: DB_NAME
+                  name: netbox-netbox-env
+            - name: DB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  key: DB_PASSWORD
+                  name: netbox-netbox-env
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  key: DB_USER
+                  name: netbox-netbox-env
+            - name: EMAIL_FROM
+              valueFrom:
+                configMapKeyRef:
+                  key: EMAIL_FROM
+                  name: netbox-netbox-env
+            - name: EMAIL_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  key: EMAIL_PASSWORD
+                  name: netbox-netbox-env
+            - name: EMAIL_PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: EMAIL_PORT
+                  name: netbox-netbox-env
+            - name: EMAIL_SERVER
+              valueFrom:
+                configMapKeyRef:
+                  key: EMAIL_SERVER
+                  name: netbox-netbox-env
+            - name: EMAIL_TIMEOUT
+              valueFrom:
+                configMapKeyRef:
+                  key: EMAIL_TIMEOUT
+                  name: netbox-netbox-env
+            - name: EMAIL_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  key: EMAIL_USERNAME
+                  name: netbox-netbox-env
+            - name: NETBOX_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  key: NETBOX_PASSWORD
+                  name: netbox-netbox-env
+            - name: NETBOX_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  key: NETBOX_USERNAME
+                  name: netbox-netbox-env
+            - name: SECRET_KEY
+              valueFrom:
+                configMapKeyRef:
+                  key: SECRET_KEY
+                  name: netbox-netbox-env
+            - name: SUPERUSER_API_TOKEN
+              valueFrom:
+                configMapKeyRef:
+                  key: SUPERUSER_API_TOKEN
+                  name: netbox-netbox-env
+            - name: SUPERUSER_EMAIL
+              valueFrom:
+                configMapKeyRef:
+                  key: SUPERUSER_EMAIL
+                  name: netbox-netbox-env
+            - name: SUPERUSER_NAME
+              valueFrom:
+                configMapKeyRef:
+                  key: SUPERUSER_NAME
+                  name: netbox-netbox-env
+            - name: SUPERUSER_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  key: SUPERUSER_PASSWORD
+                  name: netbox-netbox-env
+            - name: MEDIA_ROOT
+              valueFrom:
+                configMapKeyRef:
+                  key: MEDIA_ROOT
+                  name: netbox-netbox-env
+            - name: WEBHOOKS_ENABLED
+              valueFrom:
+                configMapKeyRef:
+                  key: WEBHOOKS_ENABLED
+                  name: netbox-netbox-env
+          volumeMounts:
+            - name: netbox-media-files
+              mountPath: /opt/netbox/netbox/media
+            - name: netbox-nginx-config
+              mountPath: /etc/netbox-nginx/
+            - name: netbox-static-files
+              mountPath: /opt/netbox/netbox/static
       restartPolicy: Always
       volumes:
-      - name: netbox-media-files
-        persistentVolumeClaim:
-          claimName: netbox-media-files
-      - name: netbox-nginx-config
-        configMap:
-          name: nginx-conf
-      - name: netbox-static-files
-        persistentVolumeClaim:
-          claimName: netbox-static-files
+        - name: netbox-media-files
+          persistentVolumeClaim:
+            claimName: netbox-media-files
+        - name: netbox-nginx-config
+          configMap:
+            name: nginx-conf
+        - name: netbox-static-files
+          persistentVolumeClaim:
+            claimName: netbox-static-files
 
 ---
 apiVersion: v1
@@ -174,9 +174,9 @@ metadata:
     part-of: netbox
 spec:
   ports:
-  - name: nbox
-    port: 8001
-    targetPort: 8001
+    - name: nbox
+      port: 8001
+      targetPort: 8001
   selector:
     name: netbox
     component: backend
@@ -192,7 +192,7 @@ metadata:
     pvcname: netbox-static-files
 spec:
   accessModes:
-  - ReadWriteMany
+    - ReadWriteMany
   resources:
     requests:
       storage: 10Gi
@@ -207,7 +207,7 @@ metadata:
     pvcname: netbox-media-files
 spec:
   accessModes:
-  - ReadWriteMany
+    - ReadWriteMany
   resources:
     requests:
       storage: 4Gi
