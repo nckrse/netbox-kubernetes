@@ -1,7 +1,9 @@
+---
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
   name: postgres-netbox-dump
+  namespace: netbox
 spec:
   schedule: "0 0 * * *"
   jobTemplate:
@@ -37,4 +39,3 @@ spec:
             - name: netbox-pg-backups
               persistentVolumeClaim:
                 claimName: netbox-pg-backups
- 
