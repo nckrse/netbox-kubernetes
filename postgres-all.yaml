@@ -5,13 +5,15 @@ metadata:
   name: postgres
   namespace: netbox
   labels:
-    backend: postgres
+    name: postgres
+    component: database
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        backend: postgres
+        name: postgres
+        component: database
     spec:
       containers:  
       - image: postgres:10-alpine
@@ -50,7 +52,8 @@ metadata:
   name: postgres
   namespace: netbox
   labels:
-    backend: postgres
+    name: postgres
+    component: database
 spec:
   clusterIP: None
   ports:
@@ -58,7 +61,8 @@ spec:
     port: 5432
     targetPort: 5432
   selector:
-    backend: postgres
+    name: postgres
+    component: database
 
 ---
 apiVersion: v1

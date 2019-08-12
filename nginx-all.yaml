@@ -5,13 +5,15 @@ metadata:
   name: nginx
   namespace: netbox
   labels:
-    frontend: nginx
+    name: nginx
+    component: frontend
 spec:
   replicas: 2
   template:
     metadata:
       labels:
-        frontend: nginx
+        name: nginx
+        component: frontend
     spec:
       containers:
       - name: nginx
@@ -41,7 +43,8 @@ metadata:
   name: nginx
   namespace: netbox
   labels:
-    frontend: nginx
+    name: nginx
+    component: frontend
 spec:
   type: NodePort
   ports:
@@ -50,5 +53,5 @@ spec:
     targetPort: 80
     nodePort: 8888
   selector:
-    frontend: nginx
-
+    name: nginx
+    component: frontend

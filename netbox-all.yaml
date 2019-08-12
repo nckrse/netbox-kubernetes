@@ -5,13 +5,15 @@ metadata:
   name: netbox
   namespace: netbox
   labels:
-    app: netbox
+    name: netbox
+    component: backend
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: netbox
+        name: netbox
+        component: backend
     spec:
       containers:
       - name: netbox
