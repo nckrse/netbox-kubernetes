@@ -23,8 +23,8 @@ spec:
         part-of: netbox
     spec:
       containers:
-        - image: postgres:10-alpine
-          name: postgres
+        - name: postgres
+          image: postgres:latest
           ports:
             - containerPort: 5432
           env:
