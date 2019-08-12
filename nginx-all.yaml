@@ -9,6 +9,11 @@ metadata:
     component: frontend
     part-of: netbox
 spec:
+  selector:
+    matchLabels:
+      name: nginx
+      component: frontend
+      part-of: netbox
   replicas: 2
   template:
     metadata:

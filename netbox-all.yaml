@@ -9,6 +9,11 @@ metadata:
     component: backend
     part-of: netbox
 spec:
+  selector:
+    matchLabels:
+      name: netbox
+      component: backend
+      part-of: netbox
   replicas: 1
   template:
     metadata:

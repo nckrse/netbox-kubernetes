@@ -9,6 +9,11 @@ metadata:
     component: database
     part-of: netbox
 spec:
+  selector:
+    matchLabels:
+      name: postgres
+      component: database
+      part-of: netbox
   replicas: 1
   template:
     metadata:
