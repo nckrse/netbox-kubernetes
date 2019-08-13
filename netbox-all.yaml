@@ -174,7 +174,6 @@ metadata:
     part-of: netbox
 spec:
   ports:
-    - name: nbox
       port: 8001
       targetPort: 8001
   selector:

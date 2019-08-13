@@ -65,7 +65,6 @@ metadata:
 spec:
   clusterIP: None
   ports:
-    - name: headless
       port: 5432
       targetPort: 5432
   selector:
