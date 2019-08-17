@@ -1,0 +1,89 @@
+---
+apiVersion: v1
+data:
+  CORS_ORIGIN_ALLOW_ALL: "True"
+  DB_HOST: netbox-postgres
+  DB_NAME: netbox
+  DB_PASSWORD: J5brHrAXFLQSif0K
+  DB_USER: netbox
+  EMAIL_FROM: netbox@bar.com
+  EMAIL_PASSWORD: ""
+  EMAIL_PORT: "25"
+  EMAIL_SERVER: localhost
+  EMAIL_TIMEOUT: "5"
+  EMAIL_USERNAME: netbox
+  MAX_PAGE_SIZE: "1000"
+  MEDIA_ROOT: /opt/netbox/netbox/media
+  NAPALM_PASSWORD: ""
+  NAPALM_TIMEOUT: "10"
+  NAPALM_USERNAME: ""
+  REDIS_CACHE_DATABASE: "1"
+  REDIS_DATABASE: "0"
+  REDIS_HOST: netbox-redis
+  REDIS_PASSWORD: H733Kdjndks81
+  REDIS_SSL: "false"
+  SECRET_KEY: r8OwDznj!!dci
+  SUPERUSER_API_TOKEN: 0123456789abcdef0123456789abcdef01234567
+  SUPERUSER_EMAIL: admin@example.com
+  SUPERUSER_NAME: admin
+  SUPERUSER_PASSWORD: admin
+  WEBHOOKS_ENABLED: "true"
+kind: ConfigMap
+metadata:
+  name: netbox-env
+  namespace: netbox
+---
+apiVersion: v1
+data:
+  POSTGRES_DB: netbox
+  POSTGRES_PASSWORD: J5brHrAXFLQSif0K
+  POSTGRES_USER: netbox
+kind: ConfigMap
+metadata:
+  name: netbox-postgres-env
+  namespace: netbox
+---
+apiVersion: v1
+data:
+  REDIS_PASSWORD: H733Kdjndks81
+kind: ConfigMap
+metadata:
+  name: netbox-redis-env
+  namespace: netbox
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: netbox-nginx-env
+  namespace: netbox
+data:
+  nginx.conf: |
+    worker_processes 1;
+    error_log /dev/stderr info;
+    events {
+      worker_connections  1024;
+    }
+    http {
+      include       /etc/nginx/mime.types;
+      default_type  application/octet-stream;
+      sendfile        on;
+      tcp_nopush     on;
+      keepalive_timeout  65;
+      gzip  on;
+      server_tokens off;
+      client_max_body_size 10M;
+      server {
+          listen 80;
+          access_log off;
+          location /static/ {
+            alias /opt/netbox/netbox/static/;
+          }
+          location / {
+            proxy_pass http://netbox-server:8001;
+            proxy_set_header X-Forwarded-Host $http_host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            add_header P3P 'CP="ALL DSP COR PSAa PSDa OUR NOR ONL UNI COM NAV"';
+          }
+      }
+    }

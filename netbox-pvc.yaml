@@ -38,6 +38,19 @@ spec:
     path: "/var/nfs/netbox-media-files-pv"
 ---
 apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: netbox-redis-pv
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: 172.21.144.201
+    path: "/var/nfs/netbox-redis-pv"
+---
+apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: netbox-postgres-pvc
@@ -90,3 +103,21 @@ spec:
       storage: 10Gi
   volumeMode: Filesystem
   volumeName: netbox-media-files-pv
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: netbox-redis-pvc
+  namespace: netbox
+  labels:
+    name: netbox
+    component: backend
+    part-of: netbox
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+  volumeMode: Filesystem
+  volumeName: netbox-redis-pv

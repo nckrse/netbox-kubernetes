@@ -1,0 +1,538 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: netbox
+  labels:
+    name: netbox
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: netbox-redis
+  namespace: netbox
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: netbox-redis
+        app.kubernetes.io/part-of: netbox
+    spec:
+      containers:
+      - args:
+        - sh
+        - -c
+        - redis-server --appendonly yes --requirepass $REDIS_PASSWORD
+        env:
+        - name: REDIS_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: REDIS_PASSWORD
+              name: netbox-redis-env
+        image: redis:4-alpine
+        name: netbox-redis
+        resources: {}
+        volumeMounts:
+        - mountPath: /data
+          name: netbox-redis-pvc
+      restartPolicy: Always
+      volumes:
+      - name: netbox-redis-pvc
+        persistentVolumeClaim:
+          claimName: netbox-redis-pvc
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: netbox-redis
+  namespace: netbox
+  labels:
+      app.kubernetes.io/name: netbox-redis
+      app.kubernetes.io/part-of: netbox
+spec:
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379
+  selector:
+    app.kubernetes.io/name: netbox-redis
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: netbox-postgres
+  namespace: netbox
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: netbox-postgres
+        app.kubernetes.io/part-of: netbox
+    spec:
+      containers:
+      - env:
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              key: POSTGRES_DB
+              name: netbox-postgres-env
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: POSTGRES_PASSWORD
+              name: netbox-postgres-env
+        - name: POSTGRES_USER
+          valueFrom:
+            configMapKeyRef:
+              key: POSTGRES_USER
+              name: netbox-postgres-env
+        image: postgres:10-alpine
+        name: netbox-postgres
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: netbox-postgres-pvc
+      restartPolicy: Always
+      volumes:
+      - name: netbox-postgres-pvc
+        persistentVolumeClaim:
+          claimName: netbox-postgres-pvc
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: netbox-postgres
+  namespace: netbox
+  labels:
+      app.kubernetes.io/name: netbox-postgres
+      app.kubernetes.io/part-of: netbox
+spec:
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  selector:
+    app.kubernetes.io/name: netbox-postgres
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: netbox-worker
+  namespace: netbox
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: netbox-worker
+        app.kubernetes.io/part-of: netbox
+    spec:
+      containers:
+      - args:
+        - rqworker
+        command:
+        - python3
+        - /opt/netbox/netbox/manage.py
+        env:
+        - name: CORS_ORIGIN_ALLOW_ALL
+          valueFrom:
+            configMapKeyRef:
+              key: CORS_ORIGIN_ALLOW_ALL
+              name: netbox-env
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: DB_HOST
+              name: netbox-env
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: DB_NAME
+              name: netbox-env
+        - name: DB_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: DB_PASSWORD
+              name: netbox-env
+        - name: DB_USER
+          valueFrom:
+            configMapKeyRef:
+              key: DB_USER
+              name: netbox-env
+        - name: EMAIL_FROM
+          valueFrom:
+            configMapKeyRef:
+              key: EMAIL_FROM
+              name: netbox-env
+        - name: EMAIL_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: EMAIL_PASSWORD
+              name: netbox-env
+        - name: EMAIL_PORT
+          valueFrom:
+            configMapKeyRef:
+              key: EMAIL_PORT
+              name: netbox-env
+        - name: EMAIL_SERVER
+          valueFrom:
+            configMapKeyRef:
+              key: EMAIL_SERVER
+              name: netbox-env
+        - name: EMAIL_TIMEOUT
+          valueFrom:
+            configMapKeyRef:
+              key: EMAIL_TIMEOUT
+              name: netbox-env
+        - name: EMAIL_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              key: EMAIL_USERNAME
+              name: netbox-env
+        - name: MAX_PAGE_SIZE
+          valueFrom:
+            configMapKeyRef:
+              key: MAX_PAGE_SIZE
+              name: netbox-env
+        - name: MEDIA_ROOT
+          valueFrom:
+            configMapKeyRef:
+              key: MEDIA_ROOT
+              name: netbox-env
+        - name: NAPALM_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: NAPALM_PASSWORD
+              name: netbox-env
+        - name: NAPALM_TIMEOUT
+          valueFrom:
+            configMapKeyRef:
+              key: NAPALM_TIMEOUT
+              name: netbox-env
+        - name: NAPALM_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              key: NAPALM_USERNAME
+              name: netbox-env
+        - name: REDIS_CACHE_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              key: REDIS_CACHE_DATABASE
+              name: netbox-env
+        - name: REDIS_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              key: REDIS_DATABASE
+              name: netbox-env
+        - name: REDIS_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: REDIS_HOST
+              name: netbox-env
+        - name: REDIS_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: REDIS_PASSWORD
+              name: netbox-env
+        - name: REDIS_SSL
+          valueFrom:
+            configMapKeyRef:
+              key: REDIS_SSL
+              name: netbox-env
+        - name: SECRET_KEY
+          valueFrom:
+            configMapKeyRef:
+              key: SECRET_KEY
+              name: netbox-env
+        - name: SUPERUSER_API_TOKEN
+          valueFrom:
+            configMapKeyRef:
+              key: SUPERUSER_API_TOKEN
+              name: netbox-env
+        - name: SUPERUSER_EMAIL
+          valueFrom:
+            configMapKeyRef:
+              key: SUPERUSER_EMAIL
+              name: netbox-env
+        - name: SUPERUSER_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: SUPERUSER_NAME
+              name: netbox-env
+        - name: SUPERUSER_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: SUPERUSER_PASSWORD
+              name: netbox-env
+        - name: WEBHOOKS_ENABLED
+          valueFrom:
+            configMapKeyRef:
+              key: WEBHOOKS_ENABLED
+              name: netbox-env
+        image: netboxcommunity/netbox:latest
+        name: netbox-worker
+        resources: {}
+        volumeMounts:
+        - mountPath: /opt/netbox/netbox/static
+          name: netbox-static-files-pvc
+        - mountPath: /opt/netbox/netbox/media
+          name: netbox-media-files-pvc
+      restartPolicy: Always
+      volumes:
+      - name: netbox-media-files-pvc
+        persistentVolumeClaim:
+          claimName: netbox-media-files-pvc
+      - name: netbox-static-files-pvc
+        persistentVolumeClaim:
+          claimName: netbox-static-files-pvc
+status: {}
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: netbox-server
+  namespace: netbox
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: netbox-server
+        app.kubernetes.io/part-of: netbox
+    spec:
+      containers:
+      - env:
+        - name: CORS_ORIGIN_ALLOW_ALL
+          valueFrom:
+            configMapKeyRef:
+              key: CORS_ORIGIN_ALLOW_ALL
+              name: netbox-env
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: DB_HOST
+              name: netbox-env
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: DB_NAME
+              name: netbox-env
+        - name: DB_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: DB_PASSWORD
+              name: netbox-env
+        - name: DB_USER
+          valueFrom:
+            configMapKeyRef:
+              key: DB_USER
+              name: netbox-env
+        - name: EMAIL_FROM
+          valueFrom:
+            configMapKeyRef:
+              key: EMAIL_FROM
+              name: netbox-env
+        - name: EMAIL_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: EMAIL_PASSWORD
+              name: netbox-env
+        - name: EMAIL_PORT
+          valueFrom:
+            configMapKeyRef:
+              key: EMAIL_PORT
+              name: netbox-env
+        - name: EMAIL_SERVER
+          valueFrom:
+            configMapKeyRef:
+              key: EMAIL_SERVER
+              name: netbox-env
+        - name: EMAIL_TIMEOUT
+          valueFrom:
+            configMapKeyRef:
+              key: EMAIL_TIMEOUT
+              name: netbox-env
+        - name: EMAIL_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              key: EMAIL_USERNAME
+              name: netbox-env
+        - name: MAX_PAGE_SIZE
+          valueFrom:
+            configMapKeyRef:
+              key: MAX_PAGE_SIZE
+              name: netbox-env
+        - name: MEDIA_ROOT
+          valueFrom:
+            configMapKeyRef:
+              key: MEDIA_ROOT
+              name: netbox-env
+        - name: NAPALM_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: NAPALM_PASSWORD
+              name: netbox-env
+        - name: NAPALM_TIMEOUT
+          valueFrom:
+            configMapKeyRef:
+              key: NAPALM_TIMEOUT
+              name: netbox-env
+        - name: NAPALM_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              key: NAPALM_USERNAME
+              name: netbox-env
+        - name: REDIS_CACHE_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              key: REDIS_CACHE_DATABASE
+              name: netbox-env
+        - name: REDIS_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              key: REDIS_DATABASE
+              name: netbox-env
+        - name: REDIS_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: REDIS_HOST
+              name: netbox-env
+        - name: REDIS_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: REDIS_PASSWORD
+              name: netbox-env
+        - name: REDIS_SSL
+          valueFrom:
+            configMapKeyRef:
+              key: REDIS_SSL
+              name: netbox-env
+        - name: SECRET_KEY
+          valueFrom:
+            configMapKeyRef:
+              key: SECRET_KEY
+              name: netbox-env
+        - name: SUPERUSER_API_TOKEN
+          valueFrom:
+            configMapKeyRef:
+              key: SUPERUSER_API_TOKEN
+              name: netbox-env
+        - name: SUPERUSER_EMAIL
+          valueFrom:
+            configMapKeyRef:
+              key: SUPERUSER_EMAIL
+              name: netbox-env
+        - name: SUPERUSER_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: SUPERUSER_NAME
+              name: netbox-env
+        - name: SUPERUSER_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: SUPERUSER_PASSWORD
+              name: netbox-env
+        - name: WEBHOOKS_ENABLED
+          valueFrom:
+            configMapKeyRef:
+              key: WEBHOOKS_ENABLED
+              name: netbox-env
+        image: netboxcommunity/netbox:latest
+        name: netbox
+        resources: {}
+        volumeMounts:
+        - mountPath: /opt/netbox/netbox/static
+          name: netbox-static-files-pvc
+        - mountPath: /opt/netbox/netbox/media
+          name: netbox-media-files-pvc
+      restartPolicy: Always
+      volumes:
+      - name: netbox-media-files-pvc
+        persistentVolumeClaim:
+          claimName: netbox-media-files-pvc
+      - name: netbox-static-files-pvc
+        persistentVolumeClaim:
+          claimName: netbox-static-files-pvc
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: netbox-server
+  namespace: netbox
+  labels:
+      app.kubernetes.io/name: netbox-server
+      app.kubernetes.io/part-of: netbox
+spec:
+  ports:
+    - protocol: TCP
+      port: 8001
+      targetPort: 8001
+  selector:
+    app.kubernetes.io/name: netbox-server
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netbox-nginx
+  namespace: netbox
+  labels:
+    app.kubernetes.io/name: netbox-nginx
+    app.kubernetes.io/part-of: netbox
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: netbox-nginx
+      app.kubernetes.io/part-of: netbox
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: netbox-nginx
+        app.kubernetes.io/part-of: netbox
+    spec:
+      containers:
+        - name: netbox-nginx
+          image: nginx:stable-alpine
+          ports:
+            - containerPort: 80
+          command: ["nginx"]
+          args: ["-c", "/etc/netbox-nginx/nginx.conf","-g", "daemon off;"]
+          volumeMounts:
+          - name: netbox-static-files-pvc
+            mountPath: /opt/netbox/netbox/static
+          - name: netbox-nginx-config
+            mountPath: /etc/netbox-nginx
+      restartPolicy: Always
+      volumes:
+        - name: netbox-static-files-pvc
+          persistentVolumeClaim:
+            claimName: netbox-static-files-pvc
+        - name: netbox-nginx-config
+          configMap:
+            name: netbox-nginx-env
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: netbox-nginx
+  namespace: netbox
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  selector:
+    app.kubernetes.io/name: netbox-nginx
