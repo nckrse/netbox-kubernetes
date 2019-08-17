@@ -30,7 +30,7 @@ metadata:
   name: netbox-media-files-pv
 spec:
   capacity:
-    storage: 5Gi
+    storage: 10Gi
   accessModes:
     - ReadWriteMany
   nfs:
