@@ -32,10 +32,10 @@ spec:
                       name: postgres-env
                       key: POSTGRES_PASSWORD
             volumeMounts:
-              - name: netbox-pg-backups
+              - name: netbox-postgres-pvc
                 mountPath: /var/lib/backups
           restartPolicy: Never
           volumes:
-            - name: netbox-pg-backups
+            - name: netbox-postgres-pvc
               persistentVolumeClaim:
-                claimName: netbox-pg-backups
+                claimName: netbox-postgres-pvc

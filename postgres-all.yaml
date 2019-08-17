@@ -44,12 +44,12 @@ spec:
                   name: shared-database-secrets
                   key: DB_PASSWORD
           volumeMounts:
-            - name: netbox-postgres-backups
+            - name: netbox-postgres-pvc
               mountPath: /var/lib/backups
       volumes:
-        - name: netbox-postgres-backups
+        - name: netbox-postgres-pvc
           persistentVolumeClaim:
-           claimName: netbox-postgres-backups
+           claimName: netbox-postgres-pvc
       restartPolicy: Always
 
 ---
@@ -76,7 +76,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: netbox-postgres-backups
+  name: netbox-postgres-pvc
   namespace: netbox
   labels:
     name: postgres
@@ -87,4 +87,7 @@ spec:
     - ReadWriteMany
   resources:
     requests:
-      storage: 40Gi
+      storage: 10Gi
+  storageClassName: ""
+  volumeMode: Filesystem
+  volumeName: netbox-postgres-pv

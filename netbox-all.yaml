@@ -144,23 +144,23 @@ spec:
                   key: WEBHOOKS_ENABLED
                   name: netbox-variables
           volumeMounts:
-            - name: netbox-media-files
+            - name: netbox-media-files-pvc
               mountPath: /opt/netbox/netbox/media
             - name: netbox-nginx-config
               mountPath: /etc/netbox-nginx/
-            - name: netbox-static-files
+            - name: netbox-static-files-pvc
               mountPath: /opt/netbox/netbox/static
       restartPolicy: Always
       volumes:
-        - name: netbox-media-files
+        - name: netbox-media-files-pvc
           persistentVolumeClaim:
-            claimName: netbox-media-files
+            claimName: netbox-media-files-pvc
         - name: netbox-nginx-config
           configMap:
             name: shared-nginx-config
-        - name: netbox-static-files
+        - name: netbox-static-files-pvc
           persistentVolumeClaim:
-            claimName: netbox-static-files
+            claimName: netbox-static-files-pvc
 
 ---
 apiVersion: v1
@@ -180,37 +180,3 @@ spec:
     name: netbox
     component: backend
     part-of: netbox
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: netbox-static-files
-  namespace: netbox
-  labels:
-    name: netbox
-    component: backend
-    part-of: netbox
-spec:
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: 10Gi
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: netbox-media-files
-  namespace: netbox
-  labels:
-    name: netbox
-    component: backend
-    part-of: netbox
-spec:
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: 4Gi

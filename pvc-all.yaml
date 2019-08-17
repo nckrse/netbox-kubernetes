@@ -1,0 +1,92 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: netbox-postgres-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: 172.21.144.201
+    path: "/var/nfs/netbox-postgres-pv"
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: netbox-static-files-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: 172.21.144.201
+    path: "/var/nfs/netbox-static-files-pv"
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: netbox-media-files-pv
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: 172.21.144.201
+    path: "/var/nfs/netbox-media-files-pv"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: netbox-postgres-pvc
+  namespace: netbox
+  labels:
+    name: postgres
+    component: database
+    part-of: netbox
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+  volumeMode: Filesystem
+  volumeName: netbox-postgres-pv
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: netbox-static-files-pvc
+  namespace: netbox
+  labels:
+    name: netbox
+    component: backend
+    part-of: netbox
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+  volumeMode: Filesystem
+  volumeName: netbox-static-files-pv
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: netbox-media-files-pvc
+  namespace: netbox
+  labels:
+    name: netbox
+    component: backend
+    part-of: netbox
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+  volumeMode: Filesystem
+  volumeName: netbox-media-files-pv

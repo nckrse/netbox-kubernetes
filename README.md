@@ -13,6 +13,7 @@ $ git clone
 $ cd netbox-kubernetes
 $ kubectl apply -f netbox-namespace.yaml
 $ kubectl apply -f netbox-variables.yaml
+$ kubectl apply -f pvc-all.yaml
 $ kubectl apply -f postgres-all.yaml
 $ kubectl apply -f netbox-all.yaml
 $ kubectl apply -f nginx-all.yaml
