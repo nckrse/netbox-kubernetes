@@ -536,3 +536,54 @@ spec:
       targetPort: 80
   selector:
     app.kubernetes.io/name: netbox-nginx
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: netbox-pg-dump
+  namespace: netbox
+spec:
+  schedule: "0 0 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: netbox-pg-dump
+              image: dustnic82/postgresclient-scp:latest
+              args:
+              - /bin/sh
+              - -c
+              - |
+                pg_dump -U "$(POSTGRES_USER)" -h netbox-postgres "$(POSTGRES_DB)" > /var/lib/backups/$(date '+%Y-%m-%d-%H-%M').sql
+                if [ $? -ne 0 ]
+                then
+                    echo "pg_dump failed"
+                else
+                    echo "pg_dump succesful: /var/lib/backups/$(date '+%Y-%m-%d-%H-%M').sql"
+                fi
+              env:
+                - name: POSTGRES_DB
+                  valueFrom:
+                    configMapKeyRef:
+                      key: POSTGRES_DB
+                      name: netbox-postgres-env
+                - name: PGPASSWORD
+                  valueFrom:
+                    configMapKeyRef:
+                      key: POSTGRES_PASSWORD
+                      name: netbox-postgres-env
+                - name: POSTGRES_USER
+                  valueFrom:
+                    configMapKeyRef:
+                      key: POSTGRES_USER
+                      name: netbox-postgres-env
+              volumeMounts:
+              - mountPath: /var/lib/backups
+                name: netbox-postgres-pvc
+                subPath: backups
+          restartPolicy: OnFailure
+          volumes:
+          - name: netbox-postgres-pvc
+            persistentVolumeClaim:
+              claimName: netbox-postgres-pvc
