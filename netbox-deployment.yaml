@@ -6,20 +6,27 @@ metadata:
   labels:
     name: netbox
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: netbox-redis
   namespace: netbox
+  labels:
+    name: netbox-redis
+    part-of: netbox
 spec:
+  selector:
+    matchLabels:
+      name: netbox-redis
+      part-of: netbox
   replicas: 1
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: netbox-redis
-        app.kubernetes.io/part-of: netbox
+        name: netbox-redis
+        part-of: netbox
     spec:
       containers:
       - args:
@@ -51,30 +58,37 @@ metadata:
   name: netbox-redis
   namespace: netbox
   labels:
-      app.kubernetes.io/name: netbox-redis
-      app.kubernetes.io/part-of: netbox
+    name: netbox-redis
+    part-of: netbox
 spec:
   ports:
     - protocol: TCP
       port: 6379
       targetPort: 6379
   selector:
-    app.kubernetes.io/name: netbox-redis
+    name: netbox-redis
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: netbox-postgres
   namespace: netbox
+  labels:
+    name: netbox-postgres
+    part-of: netbox
 spec:
+  selector:
+    matchLabels:
+      name: netbox-postgres
+      part-of: netbox
   replicas: 1
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: netbox-postgres
-        app.kubernetes.io/part-of: netbox
+        name: netbox-postgres
+        part-of: netbox
     spec:
       containers:
       - env:
@@ -112,30 +126,37 @@ metadata:
   name: netbox-postgres
   namespace: netbox
   labels:
-      app.kubernetes.io/name: netbox-postgres
-      app.kubernetes.io/part-of: netbox
+    name: netbox-postgres
+    part-of: netbox
 spec:
   ports:
     - protocol: TCP
       port: 5432
       targetPort: 5432
   selector:
-    app.kubernetes.io/name: netbox-postgres
+    name: netbox-postgres
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: netbox-worker
   namespace: netbox
+  labels:
+    name: netbox-worker
+    part-of: netbox
 spec:
+  selector:
+    matchLabels:
+      name: netbox-worker
+      part-of: netbox
   replicas: 1
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: netbox-worker
-        app.kubernetes.io/part-of: netbox
+        name: netbox-worker
+        part-of: netbox
     spec:
       containers:
       - args:
@@ -297,20 +318,27 @@ spec:
           claimName: netbox-static-files-pvc
 status: {}
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: netbox-server
   namespace: netbox
+  labels:
+    name: netbox-server
+    part-of: netbox
 spec:
+  selector:
+    matchLabels:
+      name: netbox-server
+      part-of: netbox
   replicas: 1
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: netbox-server
-        app.kubernetes.io/part-of: netbox
+        name: netbox-server
+        part-of: netbox
     spec:
       containers:
       - env:
@@ -473,15 +501,15 @@ metadata:
   name: netbox-server
   namespace: netbox
   labels:
-      app.kubernetes.io/name: netbox-server
-      app.kubernetes.io/part-of: netbox
+    name: netbox-server
+    part-of: netbox
 spec:
   ports:
     - protocol: TCP
       port: 8001
       targetPort: 8001
   selector:
-    app.kubernetes.io/name: netbox-server
+    name: netbox-server
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -489,19 +517,19 @@ metadata:
   name: netbox-nginx
   namespace: netbox
   labels:
-    app.kubernetes.io/name: netbox-nginx
-    app.kubernetes.io/part-of: netbox
+    name: netbox-nginx
+    part-of: netbox
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: netbox-nginx
-      app.kubernetes.io/part-of: netbox
+      name: netbox-nginx
+      part-of: netbox
   replicas: 1
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: netbox-nginx
-        app.kubernetes.io/part-of: netbox
+        name: netbox-nginx
+        part-of: netbox
     spec:
       containers:
         - name: netbox-nginx
@@ -535,7 +563,7 @@ spec:
       port: 80
       targetPort: 80
   selector:
-    app.kubernetes.io/name: netbox-nginx
+    name: netbox-nginx
 ---
 apiVersion: batch/v1beta1
 kind: CronJob
