@@ -13,6 +13,7 @@ To get NetBox up and running on MicroK8s:
 ```
 $ git clone
 $ cd netbox-kubernetes
+$ kubectl apply -f netbox-namespace.yaml
 $ kubectl apply -f netbox-pvc.yaml
 $ kubectl apply -f netbox-env-configmap.yaml
 $ kubectl apply -f netbox-deployment.yaml
@@ -28,7 +29,7 @@ $ kubectl get pods -n netbox
 
 The application will be available after a few minutes:
 
-"http://microk8s_ip/"
+[http://microk8s_ip/](null)
 
 
 Default credentials:
