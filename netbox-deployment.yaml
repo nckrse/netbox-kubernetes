@@ -39,7 +39,7 @@ spec:
             secretKeyRef:
               key: redis_password
               name: netbox-secrets
-        image: redis:4-alpine
+        image: redis:5-alpine
         name: netbox-redis
         resources: {}
         volumeMounts:
@@ -107,8 +107,15 @@ spec:
             configMapKeyRef:
               key: POSTGRES_USER
               name: netbox-postgres-env
-        image: postgres:10-alpine
+        - name: POSTGRES_HOST_AUTH_METHOD
+          valueFrom:
+            configMapKeyRef:
+              key: POSTGRES_HOST_AUTH_METHOD
+              name: netbox-postgres-env
+        image: postgres:12-alpine
         name: netbox-postgres
+        ports:
+        - containerPort: 5432
         resources: {}
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
@@ -245,30 +252,45 @@ spec:
             configMapKeyRef:
               key: NAPALM_USERNAME
               name: netbox-env
-        - name: REDIS_CACHE_DATABASE
+        - name: CACHING_REDIS_DATABASE
           valueFrom:
             configMapKeyRef:
-              key: REDIS_CACHE_DATABASE
+              key: CACHING_REDIS_DATABASE
               name: netbox-env
-        - name: REDIS_DATABASE
+        - name: CACHING_REDIS_HOST
           valueFrom:
             configMapKeyRef:
-              key: REDIS_DATABASE
+              key: CACHING_REDIS_HOST
               name: netbox-env
-        - name: REDIS_HOST
-          valueFrom:
-            configMapKeyRef:
-              key: REDIS_HOST
-              name: netbox-env
-        - name: REDIS_PASSWORD
+        - name: CACHING_REDIS_PASSWORD
           valueFrom:
             secretKeyRef:
               key: redis_password
               name: netbox-secrets
-        - name: REDIS_SSL
+        - name: CACHING_REDIS_SSL
           valueFrom:
             configMapKeyRef:
-              key: REDIS_SSL
+              key: CACHING_REDIS_SSL
+              name: netbox-env
+        - name: TASKS_REDIS_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              key: TASKS_REDIS_DATABASE
+              name: netbox-env
+        - name: TASKS_REDIS_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: TASKS_REDIS_HOST
+              name: netbox-env
+        - name: TASKS_REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: redis_password
+              name: netbox-secrets
+        - name: TASKS_REDIS_SSL
+          valueFrom:
+            configMapKeyRef:
+              key: TASKS_REDIS_SSL
               name: netbox-env
         - name: SECRET_KEY
           valueFrom:
@@ -295,12 +317,7 @@ spec:
             secretKeyRef:
               key: superuser_password
               name: netbox-secrets
-        - name: WEBHOOKS_ENABLED
-          valueFrom:
-            configMapKeyRef:
-              key: WEBHOOKS_ENABLED
-              name: netbox-env
-        image: netboxcommunity/netbox:latest
+        image: netboxcommunity/netbox:snapshot
         name: netbox-worker
         resources: {}
         volumeMounts:
@@ -308,6 +325,9 @@ spec:
           name: netbox-static-files-pvc
         - mountPath: /opt/netbox/netbox/media
           name: netbox-media-files-pvc
+        - mountPath: /etc/netbox/config/configuration.py
+          name: netbox-config
+          subPath: configuration.py
       restartPolicy: Always
       volumes:
       - name: netbox-media-files-pvc
@@ -316,6 +336,10 @@ spec:
       - name: netbox-static-files-pvc
         persistentVolumeClaim:
           claimName: netbox-static-files-pvc
+      - name: netbox-config
+        configMap:
+          name: netbox-env
+
 status: {}
 ---
 apiVersion: apps/v1
@@ -422,30 +446,45 @@ spec:
             configMapKeyRef:
               key: NAPALM_USERNAME
               name: netbox-env
-        - name: REDIS_CACHE_DATABASE
+        - name: CACHING_REDIS_DATABASE
           valueFrom:
             configMapKeyRef:
-              key: REDIS_CACHE_DATABASE
+              key: CACHING_REDIS_DATABASE
               name: netbox-env
-        - name: REDIS_DATABASE
+        - name: CACHING_REDIS_HOST
           valueFrom:
             configMapKeyRef:
-              key: REDIS_DATABASE
+              key: CACHING_REDIS_HOST
               name: netbox-env
-        - name: REDIS_HOST
-          valueFrom:
-            configMapKeyRef:
-              key: REDIS_HOST
-              name: netbox-env
-        - name: REDIS_PASSWORD
+        - name: CACHING_REDIS_PASSWORD
           valueFrom:
             secretKeyRef:
               key: redis_password
               name: netbox-secrets
-        - name: REDIS_SSL
+        - name: CACHING_REDIS_SSL
           valueFrom:
             configMapKeyRef:
-              key: REDIS_SSL
+              key: CACHING_REDIS_SSL
+              name: netbox-env
+        - name: TASKS_REDIS_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              key: TASKS_REDIS_DATABASE
+              name: netbox-env
+        - name: TASKS_REDIS_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: TASKS_REDIS_HOST
+              name: netbox-env
+        - name: TASKS_REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: redis_password
+              name: netbox-secrets
+        - name: TASKS_REDIS_SSL
+          valueFrom:
+            configMapKeyRef:
+              key: TASKS_REDIS_SSL
               name: netbox-env
         - name: SECRET_KEY
           valueFrom:
@@ -472,12 +511,7 @@ spec:
             secretKeyRef:
               key: superuser_password
               name: netbox-secrets
-        - name: WEBHOOKS_ENABLED
-          valueFrom:
-            configMapKeyRef:
-              key: WEBHOOKS_ENABLED
-              name: netbox-env
-        image: netboxcommunity/netbox:latest
+        image: netboxcommunity/netbox:snapshot
         name: netbox
         resources: {}
         volumeMounts:
@@ -485,6 +519,9 @@ spec:
           name: netbox-static-files-pvc
         - mountPath: /opt/netbox/netbox/media
           name: netbox-media-files-pvc
+        - mountPath: /etc/netbox/config/configuration.py
+          name: netbox-config
+          subPath: configuration.py
       restartPolicy: Always
       volumes:
       - name: netbox-media-files-pvc
@@ -493,6 +530,9 @@ spec:
       - name: netbox-static-files-pvc
         persistentVolumeClaim:
           claimName: netbox-static-files-pvc
+      - name: netbox-config
+        configMap:
+          name: netbox-env
 status: {}
 ---
 apiVersion: v1

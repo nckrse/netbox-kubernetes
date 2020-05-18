@@ -20,13 +20,111 @@ data:
   NAPALM_PASSWORD: ""
   NAPALM_TIMEOUT: "10"
   NAPALM_USERNAME: ""
-  REDIS_CACHE_DATABASE: "1"
-  REDIS_DATABASE: "0"
-  REDIS_HOST: netbox-redis
-  REDIS_SSL: "false"
+  TASKS_REDIS_HOST: netbox-redis
+  TASKS_REDIS_DATABASE: "0"
+  TASKS_REDIS_SSL: "False"
+  CACHING_REDIS_HOST: netbox-redis
+  CACHING_REDIS_DATABASE: "1"
+  CACHING_REDIS_SSL: "False"
   SUPERUSER_EMAIL: admin@example.com
   SUPERUSER_NAME: admin
-  WEBHOOKS_ENABLED: "true"
+  configuration.py: |
+    import os
+    import re
+    import socket
+
+    def read_secret(secret_name):
+        try:
+            f = open('/run/secrets/' + secret_name, 'r', encoding='utf-8')
+        except EnvironmentError:
+            return ''
+        else:
+            with f:
+                return f.readline().strip()
+
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(' ')
+
+    DATABASE = {
+        'NAME': os.environ.get('DB_NAME', 'netbox'),
+        'USER': os.environ.get('DB_USER', 'netbox'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', read_secret('db_password')),
+        'HOST': os.environ.get('DB_HOST', 'netbox-postgres'),
+        'PORT': os.environ.get('DB_PORT', '5432'),
+        'OPTIONS': {'sslmode': os.environ.get('DB_SSLMODE', 'prefer')},
+        'CONN_MAX_AGE': int(os.environ.get('DB_CONN_MAX_AGE', '300')),
+    }
+
+    SECRET_KEY = os.environ.get('SECRET_KEY', read_secret('secret_key'))
+
+    REDIS = {
+        'tasks': {
+            'HOST': os.environ.get('TASKS_REDIS_HOST', os.environ.get('REDIS_HOST', 'localhost')),
+            'PORT': int(os.environ.get('TASKS_REDIS_PORT', os.environ.get('REDIS_PORT', 6379))),
+            'PASSWORD': os.environ.get('TASKS_REDIS_PASSWORD', os.environ.get('REDIS_PASSWORD', read_secret('tasks_redis_password'))),
+            'DATABASE': int(os.environ.get('TASKS_REDIS_DATABASE', os.environ.get('REDIS_DATABASE', 0))),
+            'DEFAULT_TIMEOUT': int(os.environ.get('TASKS_REDIS_TIMEOUT', os.environ.get('REDIS_TIMEOUT', 300))),
+            'SSL': os.environ.get('TASKS_REDIS_SSL', os.environ.get('REDIS_SSL', 'False')).lower() == 'true',
+        },
+        'caching': {
+            'HOST': os.environ.get('CACHING_REDIS_HOST', os.environ.get('REDIS_HOST', 'localhost')),
+            'PORT': int(os.environ.get('CACHING_REDIS_PORT', os.environ.get('REDIS_PORT', 6379))),
+            'PASSWORD': os.environ.get('CACHING_REDIS_PASSWORD', os.environ.get('REDIS_PASSWORD', read_secret('caching_redis_password'))),
+            'DATABASE': int(os.environ.get('CACHING_REDIS_DATABASE', os.environ.get('REDIS_DATABASE', 1))),
+            'DEFAULT_TIMEOUT': int(os.environ.get('CACHING_REDIS_TIMEOUT', os.environ.get('REDIS_TIMEOUT', 300))),
+            'SSL': os.environ.get('CACHING_REDIS_SSL', os.environ.get('REDIS_SSL', 'False')).lower() == 'true',
+        }
+    }
+
+    ADMINS = [
+        # ['John Doe', 'jdoe@example.com'],
+    ]
+
+    BANNER_TOP = os.environ.get('BANNER_TOP', '')
+    BANNER_BOTTOM = os.environ.get('BANNER_BOTTOM', '')
+    BANNER_LOGIN = os.environ.get('BANNER_LOGIN', '')
+    BASE_PATH = os.environ.get('BASE_PATH', '')
+    CACHE_TIMEOUT = int(os.environ.get('CACHE_TIMEOUT', 900))
+    CHANGELOG_RETENTION = int(os.environ.get('CHANGELOG_RETENTION', 90))
+    CORS_ORIGIN_ALLOW_ALL = os.environ.get('CORS_ORIGIN_ALLOW_ALL', 'False').lower() == 'true'
+    CORS_ORIGIN_WHITELIST = list(filter(None, os.environ.get('CORS_ORIGIN_WHITELIST', 'https://localhost').split(' ')))
+    CORS_ORIGIN_REGEX_WHITELIST = [re.compile(r) for r in list(filter(None, os.environ.get('CORS_ORIGIN_REGEX_WHITELIST', '').split(' ')))]
+    DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
+
+    EMAIL = {
+        'SERVER': os.environ.get('EMAIL_SERVER', 'localhost'),
+        'PORT': int(os.environ.get('EMAIL_PORT', 25)),
+        'USERNAME': os.environ.get('EMAIL_USERNAME', ''),
+        'PASSWORD': os.environ.get('EMAIL_PASSWORD', read_secret('email_password')),
+        'TIMEOUT': int(os.environ.get('EMAIL_TIMEOUT', 10)),  # seconds
+        'FROM_EMAIL': os.environ.get('EMAIL_FROM', ''),
+    }
+
+    ENFORCE_GLOBAL_UNIQUE = os.environ.get('ENFORCE_GLOBAL_UNIQUE', 'False').lower() == 'true'
+    EXEMPT_VIEW_PERMISSIONS = list(filter(None, os.environ.get('EXEMPT_VIEW_PERMISSIONS', '').split(' ')))
+    LOGGING = {}
+    LOGIN_REQUIRED = os.environ.get('LOGIN_REQUIRED', 'False').lower() == 'true'
+    MAINTENANCE_MODE = os.environ.get('MAINTENANCE_MODE', 'False').lower() == 'true'
+    MAX_PAGE_SIZE = int(os.environ.get('MAX_PAGE_SIZE', 1000))
+    MEDIA_ROOT = os.environ.get('MEDIA_ROOT', os.path.join(BASE_DIR, 'media'))
+    METRICS_ENABLED = os.environ.get('METRICS_ENABLED', 'False').lower() == 'true'
+    NAPALM_USERNAME = os.environ.get('NAPALM_USERNAME', '')
+    NAPALM_PASSWORD = os.environ.get('NAPALM_PASSWORD', read_secret('napalm_password'))
+    NAPALM_TIMEOUT = int(os.environ.get('NAPALM_TIMEOUT', 30))
+    NAPALM_ARGS = {}
+    PAGINATE_COUNT = int(os.environ.get('PAGINATE_COUNT', 50))
+    PREFER_IPV4 = os.environ.get('PREFER_IPV4', 'False').lower() == 'true'
+    RELEASE_CHECK_TIMEOUT = os.environ.get('RELEASE_CHECK_TIMEOUT', 24 * 3600)
+    RELEASE_CHECK_URL = os.environ.get('RELEASE_CHECK_URL', None)
+    REPORTS_ROOT = os.environ.get('REPORTS_ROOT', '/etc/netbox/reports')
+    SCRIPTS_ROOT = os.environ.get('SCRIPTS_ROOT', '/etc/netbox/scripts')
+    TIME_ZONE = os.environ.get('TIME_ZONE', 'UTC')
+    DATE_FORMAT = os.environ.get('DATE_FORMAT', 'N j, Y')
+    SHORT_DATE_FORMAT = os.environ.get('SHORT_DATE_FORMAT', 'Y-m-d')
+    TIME_FORMAT = os.environ.get('TIME_FORMAT', 'g:i a')
+    SHORT_TIME_FORMAT = os.environ.get('SHORT_TIME_FORMAT', 'H:i:s')
+    DATETIME_FORMAT = os.environ.get('DATETIME_FORMAT', 'N j, Y g:i a')
+    SHORT_DATETIME_FORMAT = os.environ.get('SHORT_DATETIME_FORMAT', 'Y-m-d H:i')
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -36,6 +134,7 @@ metadata:
 data:
   POSTGRES_DB: netbox
   POSTGRES_USER: netbox
+  POSTGRES_HOST_AUTH_METHOD: md5
 ---
 apiVersion: v1
 kind: ConfigMap
