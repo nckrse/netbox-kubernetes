@@ -36,9 +36,9 @@ spec:
         env:
         - name: REDIS_PASSWORD
           valueFrom:
-            configMapKeyRef:
-              key: REDIS_PASSWORD
-              name: netbox-redis-env
+            secretKeyRef:
+              key: redis_password
+              name: netbox-secrets
         image: redis:4-alpine
         name: netbox-redis
         resources: {}
@@ -99,9 +99,9 @@ spec:
               name: netbox-postgres-env
         - name: POSTGRES_PASSWORD
           valueFrom:
-            configMapKeyRef:
-              key: POSTGRES_PASSWORD
-              name: netbox-postgres-env
+            secretKeyRef:
+              key: postgres_password
+              name: netbox-secrets
         - name: POSTGRES_USER
           valueFrom:
             configMapKeyRef:
@@ -182,9 +182,9 @@ spec:
               name: netbox-env
         - name: DB_PASSWORD
           valueFrom:
-            configMapKeyRef:
-              key: DB_PASSWORD
-              name: netbox-env
+            secretKeyRef:
+              key: postgres_password
+              name: netbox-secrets
         - name: DB_USER
           valueFrom:
             configMapKeyRef:
@@ -262,9 +262,9 @@ spec:
               name: netbox-env
         - name: REDIS_PASSWORD
           valueFrom:
-            configMapKeyRef:
-              key: REDIS_PASSWORD
-              name: netbox-env
+            secretKeyRef:
+              key: redis_password
+              name: netbox-secrets
         - name: REDIS_SSL
           valueFrom:
             configMapKeyRef:
@@ -272,14 +272,14 @@ spec:
               name: netbox-env
         - name: SECRET_KEY
           valueFrom:
-            configMapKeyRef:
-              key: SECRET_KEY
-              name: netbox-env
+            secretKeyRef:
+              key: secret_key
+              name: netbox-secrets
         - name: SUPERUSER_API_TOKEN
           valueFrom:
-            configMapKeyRef:
-              key: SUPERUSER_API_TOKEN
-              name: netbox-env
+            secretKeyRef:
+              key: superuser_api_token
+              name: netbox-secrets
         - name: SUPERUSER_EMAIL
           valueFrom:
             configMapKeyRef:
@@ -292,9 +292,9 @@ spec:
               name: netbox-env
         - name: SUPERUSER_PASSWORD
           valueFrom:
-            configMapKeyRef:
-              key: SUPERUSER_PASSWORD
-              name: netbox-env
+            secretKeyRef:
+              key: superuser_password
+              name: netbox-secrets
         - name: WEBHOOKS_ENABLED
           valueFrom:
             configMapKeyRef:
@@ -359,9 +359,9 @@ spec:
               name: netbox-env
         - name: DB_PASSWORD
           valueFrom:
-            configMapKeyRef:
-              key: DB_PASSWORD
-              name: netbox-env
+            secretKeyRef:
+              key: postgres_password
+              name: netbox-secrets
         - name: DB_USER
           valueFrom:
             configMapKeyRef:
@@ -439,9 +439,9 @@ spec:
               name: netbox-env
         - name: REDIS_PASSWORD
           valueFrom:
-            configMapKeyRef:
-              key: REDIS_PASSWORD
-              name: netbox-env
+            secretKeyRef:
+              key: redis_password
+              name: netbox-secrets
         - name: REDIS_SSL
           valueFrom:
             configMapKeyRef:
@@ -449,14 +449,14 @@ spec:
               name: netbox-env
         - name: SECRET_KEY
           valueFrom:
-            configMapKeyRef:
-              key: SECRET_KEY
-              name: netbox-env
+            secretKeyRef:
+              key: secret_key
+              name: netbox-secrets
         - name: SUPERUSER_API_TOKEN
           valueFrom:
-            configMapKeyRef:
-              key: SUPERUSER_API_TOKEN
-              name: netbox-env
+            secretKeyRef:
+              key: superuser_api_token
+              name: netbox-secrets
         - name: SUPERUSER_EMAIL
           valueFrom:
             configMapKeyRef:
@@ -469,9 +469,9 @@ spec:
               name: netbox-env
         - name: SUPERUSER_PASSWORD
           valueFrom:
-            configMapKeyRef:
-              key: SUPERUSER_PASSWORD
-              name: netbox-env
+            secretKeyRef:
+              key: superuser_password
+              name: netbox-secrets
         - name: WEBHOOKS_ENABLED
           valueFrom:
             configMapKeyRef:
@@ -598,9 +598,9 @@ spec:
                       name: netbox-postgres-env
                 - name: PGPASSWORD
                   valueFrom:
-                    configMapKeyRef:
-                      key: POSTGRES_PASSWORD
-                      name: netbox-postgres-env
+                    secretKeyRef:
+                      key: postgres_password
+                      name: netbox-secrets
                 - name: POSTGRES_USER
                   valueFrom:
                     configMapKeyRef:

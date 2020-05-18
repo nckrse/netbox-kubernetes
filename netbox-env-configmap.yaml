@@ -1,10 +1,13 @@
 ---
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: netbox-env
+  namespace: netbox
 data:
   CORS_ORIGIN_ALLOW_ALL: "True"
   DB_HOST: netbox-postgres
   DB_NAME: netbox
-  DB_PASSWORD: J5brHrAXFLQSif0K
   DB_USER: netbox
   EMAIL_FROM: netbox@bar.com
   EMAIL_PASSWORD: ""
@@ -20,36 +23,19 @@ data:
   REDIS_CACHE_DATABASE: "1"
   REDIS_DATABASE: "0"
   REDIS_HOST: netbox-redis
-  REDIS_PASSWORD: H733Kdjndks81
   REDIS_SSL: "false"
-  SECRET_KEY: r8OwDznj!!dci
-  SUPERUSER_API_TOKEN: 0123456789abcdef0123456789abcdef01234567
   SUPERUSER_EMAIL: admin@example.com
   SUPERUSER_NAME: admin
-  SUPERUSER_PASSWORD: admin
   WEBHOOKS_ENABLED: "true"
-kind: ConfigMap
-metadata:
-  name: netbox-env
-  namespace: netbox
 ---
 apiVersion: v1
-data:
-  POSTGRES_DB: netbox
-  POSTGRES_PASSWORD: J5brHrAXFLQSif0K
-  POSTGRES_USER: netbox
 kind: ConfigMap
 metadata:
   name: netbox-postgres-env
   namespace: netbox
----
-apiVersion: v1
 data:
-  REDIS_PASSWORD: H733Kdjndks81
-kind: ConfigMap
-metadata:
-  name: netbox-redis-env
-  namespace: netbox
+  POSTGRES_DB: netbox
+  POSTGRES_USER: netbox
 ---
 apiVersion: v1
 kind: ConfigMap

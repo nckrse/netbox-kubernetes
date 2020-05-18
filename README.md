@@ -14,6 +14,7 @@ $ cd netbox-kubernetes
 $ kubectl apply -f netbox-pvc.yaml
 $ kubectl apply -f netbox-env-configmap.yaml
 $ kubectl apply -f netbox-deployment.yaml
+$ kubectl apply -f netbox-secrets.yaml
 ```
 
 At the moment you can access the application using follwing command.
