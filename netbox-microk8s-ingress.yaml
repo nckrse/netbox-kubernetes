@@ -1,0 +1,13 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: netbox-ingress
+  namespace: netbox
+spec:
+  rules:
+  - http:
+      paths:
+        - path: /
+          backend:
+            serviceName: netbox-nginx
+            servicePort: 80

@@ -4,9 +4,11 @@ Kubernetes manifest resources for Netbox.
 All images are pulled from docker hub.  
 Netbox images pulled from the [community-maintained Docker Hub](https://hub.docker.com/r/netboxcommunity/netbox/).
 
-# Quickstart on Minikube
+# Quickstart on MicroK8s
 
-To get NetBox up and running on Minikube:
+> Note: DNS and Ingress addons must be enabled (`microk8s status`)
+
+To get NetBox up and running on MicroK8s:
 
 ```
 $ git clone
@@ -15,29 +17,19 @@ $ kubectl apply -f netbox-pvc.yaml
 $ kubectl apply -f netbox-env-configmap.yaml
 $ kubectl apply -f netbox-deployment.yaml
 $ kubectl apply -f netbox-secrets.yaml
+$ kubectl apply -f netbox-microk8s-ingress.yaml
 ```
 
-At the moment you can access the application using follwing command.
+At the moment you can validate the pods status using following command.
 
 ```
 $ kubectl get pods -n netbox
 ```
 
-Now you can replace "Nginx-Pod-Name":
+The application will be available after a few minutes:
 
-```
-$ kubectl port-forward Nginx-Pod-Name 8001:80 --namespace netbox
-```
+"http://microk8s_ip/"
 
-**8001 is a localport** It can be changed according to you.
-The application will be available after a few minutes.
-"http://localhost:8001"
-
-```
-**accessing** Netbox using NodePort
-As Netbox is using ALLOWED_HOST variable, we need to update the value of it as well as in /etc/hosts in order to access it on nodeport. for example, netbox.netbox is FQDN   
-"http://netbox.netbox:NODEPORT"
-```
 
 Default credentials:
 
@@ -51,10 +43,13 @@ https://hub.docker.com/r/netboxcommunity/netbox/
 
 # Road Map/To Do
 
-* Ingress-Controller
 * Helm Chart
 
 # About
 
-This is a living document.  
-If you spot areas that can be improved or rewritten, contributions are welcome!
+* Modify `netbox-pvc.yaml` with your NFS server/path or alternate storage (Ceph, etc.)
+* Modify `netbox-secrets.yaml` with your secrets (must be base64 encoded). NAPALM and Email are null and Kubernetes doesn't support null base64 values, so these remain in `netbox-env-configmap.yaml` until changed
+* Modify `netbox-microk8s-ingress.yaml` if you would rather support a host-based configuration instead of catchall
+
+_This is a living document._
+_If you spot areas that can be improved or rewritten, contributions are welcome!_
